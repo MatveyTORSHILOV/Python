@@ -1,0 +1,47 @@
+#Практика 7 14 вар номер 2
+import math
+
+
+def f(p1, p2):
+
+    x1, y1 = p1
+    x2, y2 = p2
+
+
+    d = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    return d
+
+a = {
+    'X': (2, 3),
+    'Y': (10, 8),
+    'Z': (1, 1),
+    'P': (5, 12)
+}
+
+p= list(a.keys())
+
+max = -1.0
+far = ("", "")
+
+print("Поиск максимального расстояния между точками")
+print(f"Заданные точки: {a}")
+
+for i in range(len(p)):
+    for j in range(i + 1, len(p)):
+
+        name1 = p[i]
+        name2 = p[j]
+
+        coord1 = a[name1]
+        coord2 = a[name2]
+
+
+        c = f(coord1, coord2)
+
+
+        if c > max:
+            max = c
+            far = (name1, name2)
+
+print(f"Точки, находящиеся на максимальном расстоянии: {far[0]} и {far[1]}")
+print(f"Максимальное расстояние: {max:.4f}")
