@@ -1,0 +1,48 @@
+#практика 7 1 задание  вариант 14
+
+def f(n):
+
+    count = 0
+
+    for i in range(1, n + 1):
+        if n % i == 0:
+            count += 1
+    return count
+
+
+
+print("Поиск чисел с максимальным количеством делителей")
+
+try:
+    M = int(input("Введите начало интервала M: "))
+    N = int(input("Введите конец интервала N: "))
+except ValueError:
+    print("Ошибка ввода введите целые числа.")
+    exit()
+
+if M > N:
+    M, N = N, M
+
+m = 0
+n = []
+
+for number in range(M, N + 1):
+    c = f(number)
+
+    if c > m:
+
+        m = c
+
+        n= [number]
+    elif c == m:
+
+        n.append(number)
+
+
+print(f"В интервале [{M}, {N}]:")
+print(f"Максимальное количество делителей: {m}")
+print("Числа, имеющие максимальное количество делителей:")
+print(n)
+
+
+
