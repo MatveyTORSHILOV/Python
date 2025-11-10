@@ -1,0 +1,38 @@
+#8 практика 1 задание (14вар)
+arr = [
+    [10,2,3],
+    [4,50,6],
+    [7,8,90]
+]
+
+m = 0
+print('исходный массив')
+for j in arr:
+    print(j)
+
+N = len(arr)
+
+mx = -1
+mj = -1
+for i in range(N):
+    k = arr[i][i]
+
+    if k > mx:
+        mx = k
+        mj = i
+print(f"Макс на диагонали: {mx}")
+print(f"Строка которую нужно заменить: {i}")
+
+if mj != m:
+    print(f"Меняем строку {m} и строку {mj}...")
+
+    okak = arr[m]
+    arr[m] = arr[mj]
+    arr[mj] = okak
+
+else:
+    print("Строки совпадают обмен не нужен")
+print("Конечный массив")
+for j in arr:
+    print(j)
+
