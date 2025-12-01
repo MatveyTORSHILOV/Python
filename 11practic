@@ -1,0 +1,150 @@
+
+import tkinter as tk
+from tkinter import ttk, messagebox, filedialog
+import os
+
+root = None
+notebook = None
+calc_num1_entry = None
+calc_num2_entry = None
+calc_operator_combobox = None
+calc_result_label = None
+cb_var1 = None
+cb_var2 = None
+cb_var3 = None
+text_widget = None
+
+def calculate():
+    try:
+        num1 = float(calc_num1_entry.get())
+        num2 = float(calc_num2_entry.get())
+        operator = calc_operator_combobox.get()
+        result = 0
+
+        if operator == "+":
+            result = num1 + num2
+        elif operator == "-":
+            result = num1 - num2
+        elif operator == "*":
+            result = num1 * num2
+        elif operator == "/":
+            if num2 == 0:
+                messagebox.showerror("Ошибка", "Деление на ноль невозможно!")
+                return
+            result = num1 / num2
+        
+
+        calc_result_label.config(text=f"Результат: {result}")
+
+    except ValueError:
+        messagebox.showerror("Ошибка", "Пожалуйста, введите корректные числа.")
+    except Exception as e:
+        messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
+
+def show_checkbox_selection():
+    selected_options = []
+    if cb_var1.get():
+        selected_options.append("Первый вариант")
+    if cb_var2.get():
+        selected_options.append("Второй вариант")
+    if cb_var3.get():
+        selected_options.append("Третий вариант")
+    if selected_options:
+        message = "Вы выбрали:\n" + "\n".join(selected_options)
+        messagebox.showinfo("Ваш выбор", message)
+    else:
+        messagebox.showinfo("Ваш выбор", "Вы ничего не выбрали.")
+
+def load_text_from_file_menu():
+    for i, tab_text_id in enumerate(notebook.tabs()):
+        if notebook.tab(tab_text_id, "text") == "Текстовый редактор":
+            notebook.select(i)
+            break
+
+    file_path = filedialog.askopenfilename(
+        title="Выберите текстовый файл",
+        filetypes=[("Текстовые файлы", "*.txt"), ("Все файлы", "*.*")]
+    )
+    if file_path:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+
+                if text_widget:
+                    text_widget.delete(1.0, tk.END)
+                    text_widget.insert(tk.END, content)
+        except FileNotFoundError:
+            messagebox.showerror("Ошибка", f"Файл не найден: {file_path}")
+        except Exception as e:
+            messagebox.showerror("Ошибка", f"Не удалось прочитать файл: {e}")
+def create_calculator_tab():
+    global calc_num1_entry, calc_num2_entry, calc_operator_combobox, calc_result_label
+    
+    tab1_frame = ttk.Frame(notebook)
+    notebook.add(tab1_frame, text="Калькулятор")
+    for i in range(4): tab1_frame.columnconfigure(i, weight=1)
+    for i in range(3): tab1_frame.rowconfigure(i, weight=1)
+    ttk.Label(tab1_frame, text="Число 1:").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+    calc_num1_entry = ttk.Entry(tab1_frame)
+    calc_num1_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+
+    ttk.Label(tab1_frame, text="Число 2:").grid(row=1, column=0, padx=5, pady=5, sticky="e")
+    calc_num2_entry = ttk.Entry(tab1_frame)
+    calc_num2_entry.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+
+    ttk.Label(tab1_frame, text="Операция:").grid(row=0, column=2, padx=5, pady=5, sticky="e")
+    calc_operator_combobox = ttk.Combobox(tab1_frame, values=["+", "-", "*", "/"], state="readonly")
+    calc_operator_combobox.set("+") # Значение по умолчанию
+    calc_operator_combobox.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
+
+    ttk.Button(tab1_frame, text="Рассчитать", command=calculate).grid(row=1, column=3, padx=5, pady=5, sticky="ew")
+
+    calc_result_label = ttk.Label(tab1_frame, text="Результат: ")
+    calc_result_label.grid(row=2, column=0, columnspan=4, padx=5, pady=5, sticky="w")
+def create_checkbox_tab():
+    global cb_var1, cb_var2, cb_var3
+
+    tab2_frame = ttk.Frame(notebook)
+    notebook.add(tab2_frame, text="Чекбоксы")
+
+    tab2_frame.columnconfigure(0, weight=1)
+    for i in range(5): tab2_frame.rowconfigure(i, weight=1)
+    cb_var1 = tk.BooleanVar()
+    cb_var2 = tk.BooleanVar()
+    cb_var3 = tk.BooleanVar()
+    ttk.Checkbutton(tab2_frame, text="Первый вариант", variable=cb_var1).grid(row=1, column=0, padx=10, pady=5, sticky="w")
+    ttk.Checkbutton(tab2_frame, text="Второй вариант", variable=cb_var2).grid(row=2, column=0, padx=10, pady=5, sticky="w")
+    ttk.Checkbutton(tab2_frame, text="Третий вариант", variable=cb_var3).grid(row=3, column=0, padx=10, pady=5, sticky="w")
+    ttk.Button(tab2_frame, text="Показать выбор", command=show_checkbox_selection).grid(row=4, column=0, padx=10, pady=10, sticky="ew")
+def create_text_editor_tab():
+    global text_widget
+
+    tab3_frame = ttk.Frame(notebook)
+    notebook.add(tab3_frame, text="Текстовый редактор")
+
+    tab3_frame.columnconfigure(0, weight=1)
+    tab3_frame.rowconfigure(0, weight=1)
+    text_widget = tk.Text(tab3_frame, wrap="word", undo=True)
+    text_widget.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+    scrollbar = ttk.Scrollbar(tab3_frame, command=text_widget.yview)
+    scrollbar.grid(row=0, column=1, sticky="ns")
+    text_widget.config(yscrollcommand=scrollbar.set)
+def create_menu():
+    menubar = tk.Menu(root)
+    root.config(menu=menubar)
+    file_menu = tk.Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Файл", menu=file_menu)
+    file_menu.add_command(label="Загрузить текст (вкладка 3)", command=load_text_from_file_menu)
+    file_menu.add_separator()
+    file_menu.add_command(label="Выход", command=root.quit)
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Торшилов Матвей Алексеевич")
+    root.geometry("600x500")
+    notebook = ttk.Notebook(root)
+    notebook.pack(expand=True, fill="both", padx=10, pady=10)
+    create_calculator_tab()
+    create_checkbox_tab()
+    create_text_editor_tab()
+    create_menu()
+    root.mainloop()
